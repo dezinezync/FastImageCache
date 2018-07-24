@@ -391,8 +391,10 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
 
     // The delegate can override the list of families to process
     if (_delegateImplementsShouldProcessAllFormatsInFamilyForEntity) {
+        __weak typeof(self) wself = self;
         [families minusSet:[families objectsPassingTest:^BOOL(NSString *familyName, BOOL *stop) {
-            return ![_delegate imageCache:self shouldProcessAllFormatsInFamily:familyName forEntity:entity];
+            __strong typeof(wself) sself = wself;
+            return ![sself->_delegate imageCache:sself shouldProcessAllFormatsInFamily:familyName forEntity:entity];
         }]];
     }
 

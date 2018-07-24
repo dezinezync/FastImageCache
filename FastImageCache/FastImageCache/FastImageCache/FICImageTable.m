@@ -723,9 +723,12 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
             __metadataQueue = dispatch_queue_create("com.path.FastImageCache.ImageTableMetadataQueue", NULL);
         });
         
+        __weak typeof(self) wself = self;
+        
         dispatch_async(__metadataQueue, ^{
+            __strong typeof(wself) sself = wself;
             // Cancel serialization if a new metadata version is queued to be saved
-            if (metadataVersion != _metadataVersion) {
+            if (metadataVersion != sself->_metadataVersion) {
                 return;
             }
 
@@ -733,13 +736,13 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
                 NSData *data = [NSJSONSerialization dataWithJSONObject:metadataDictionary options:kNilOptions error:NULL];
 
                 // Cancel disk writing if a new metadata version is queued to be saved
-                if (metadataVersion != _metadataVersion) {
+                if (metadataVersion != sself->_metadataVersion) {
                     return;
                 }
 
                 BOOL fileWriteResult = [data writeToFile:[self metadataFilePath] atomically:NO];
                 if (fileWriteResult == NO) {
-                    NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s couldn't write metadata for format %@", __PRETTY_FUNCTION__, [_imageFormat name]];
+                    NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s couldn't write metadata for format %@", __PRETTY_FUNCTION__, [sself->_imageFormat name]];
                     [self.imageCache _logMessage:message];
                 }
             }
