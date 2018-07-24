@@ -41,7 +41,7 @@ NSString * FICStringWithUUIDBytes(CFUUIDBytes UUIDBytes) {
 }
 
 CFUUIDBytes FICUUIDBytesWithString(NSString *string) {
-    CFUUIDBytes UUIDBytes;
+    CFUUIDBytes UUIDBytes = {};
     CFUUIDRef UUIDRef = CFUUIDCreateFromString(kCFAllocatorDefault, (CFStringRef)string);
     
     if (UUIDRef != NULL) {
